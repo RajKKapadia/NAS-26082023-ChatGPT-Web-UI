@@ -8,15 +8,21 @@ load_dotenv(find_dotenv())
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
 
-def chat_completion(messages: list[dict]) -> str:
+def chat_completion(messages: list) -> list[str]:
     try:
-        completion = openai.ChatCompletion.create(
+        response = openai.ChatCompletion.create(
             model='gpt-3.5-turbo',
-            messages=messages
+            messages=messages,
+            stream=True
         )
-        return completion.choices[0].message['content']
+        collected_messages = []
+        for chunk in response:
+            delta = chunk['choices'][0]['delta']
+            if 'content' in delta.keys():
+                collected_messages.append(delta['content'])
+        return collected_messages
     except:
-        return 'We are facing an issue.'
+        return ['We are facing a technical issue at this moment.']
 
 # print(chat_completion([
 #     {"role": "system", "content": "You are a helpful assistant."},
@@ -54,9 +60,13 @@ def generate_response(text: str, chatbot: list[list]) -> tuple:
     print(chatbot)
     formated_messages = format_messages(chatbot)
     print(formated_messages)
-    response = chat_completion(formated_messages)
-    chatbot[-1][1] = response
-    return '', chatbot
+    bot_messages = chat_completion(formated_messages)
+    chatbot[-1][1] = ''
+    chatbot[-1][1] = ''
+    for bm in bot_messages:
+        chatbot[-1][1] += bm
+        yield chatbot
+    return chatbot
 
 def set_user_query(text: str, chatbot: list[list]) -> tuple:
     chatbot += [[text, None]]

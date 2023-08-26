@@ -17,7 +17,9 @@ with gr.Blocks() as demo:
     ).then(
         fn=generate_response,
         inputs=[msg, chatbot],
-        outputs=[msg, chatbot]
+        outputs=[chatbot]
     )
 
     clear.click(fn=demo_func, inputs=[], outputs=[msg, chatbot])
+
+demo.queue()
