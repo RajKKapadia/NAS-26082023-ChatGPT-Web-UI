@@ -55,11 +55,8 @@ def format_messages(chat_history: list[list]) -> list[dict]:
 
 # print(format_messages(chat_history))
 
-
 def generate_response(text: str, chatbot: list[list]) -> tuple:
-    print(chatbot)
     formated_messages = format_messages(chatbot)
-    print(formated_messages)
     bot_messages = chat_completion(formated_messages)
     chatbot[-1][1] = ''
     chatbot[-1][1] = ''
@@ -70,5 +67,4 @@ def generate_response(text: str, chatbot: list[list]) -> tuple:
 
 def set_user_query(text: str, chatbot: list[list]) -> tuple:
     chatbot += [[text, None]]
-    print(chatbot)
     return '', chatbot
